@@ -256,7 +256,7 @@ int main() {
 <div class="section">
     <h2>6. 联系方式</h2>
     <p>如有任何问题，请联系开发团队：</p>
-    <p>Email: <a href="mailto:dev@example.com">dev@example.com</a></p>
+    <p>Email:qqq17308444882@163.com</p>
 </div>
 
 </body>
