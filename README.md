@@ -82,8 +82,9 @@ namespace CreaWindowts {
     - SetWebAlpha()          // 透明度控制
     - EnableBlurBehindWindow() // 毛玻璃效果
 }
-
-//main.cpp文件
+```cpp
+<br><h2>main.cpp文件</h2>
+```cpp
 // 全局状态:
 - g_bRunning                // 程序运行标志
 - CpuUserge/CpuMhz          // CPU监控变量
@@ -103,8 +104,9 @@ namespace CreaWindowts {
 - HandleClient()            // 客户端请求处理
   ├─ 数据接收解析
   └─ 调用业务逻辑
-
-//OPEN.h文件
+```cpp
+<br><h2>OPEN.h文件</h2>
+```cpp
 // 系统参数:
 - WHHight/WHWither          // 屏幕分辨率
 
@@ -113,8 +115,10 @@ namespace CreaWindowts {
 
 // 业务函数声明:
 - openWeb()                 // 网页业务处理入口
+```cpp
 
-//stream.h文件
+<br><h2>stream.h文件</h2>
+```cpp
 // 数据结构:
 struct PrjectURL {          // 资源描述结构体
     string Name/URL/Type/Tag
@@ -126,10 +130,11 @@ struct PrjectURL {          // 资源描述结构体
 // 文件操作:
 - OutFilePrject()           // 资源序列化存储
 - ReadFilePrject()          // 资源反序列化加载
+```cpp
 
 
-
-功能流程图
+<br><h2>功能流程图</h2>
+```cpp
 程序启动
 ├─ 初始化硬件监控线程
 ├─ 加载本地资源文件
