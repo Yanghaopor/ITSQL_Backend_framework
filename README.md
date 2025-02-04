@@ -82,7 +82,7 @@ namespace CreaWindowts {
     - SetWebAlpha()          // 透明度控制
     - EnableBlurBehindWindow() // 毛玻璃效果
 }
-```cpp
+```
 <br><h2>main.cpp文件</h2>
 ```cpp
 // 全局状态:
@@ -104,7 +104,7 @@ namespace CreaWindowts {
 - HandleClient()            // 客户端请求处理
   ├─ 数据接收解析
   └─ 调用业务逻辑
-```cpp
+```
 <br><h2>OPEN.h文件</h2>
 ```cpp
 // 系统参数:
@@ -115,7 +115,7 @@ namespace CreaWindowts {
 
 // 业务函数声明:
 - openWeb()                 // 网页业务处理入口
-```cpp
+```
 
 <br><h2>stream.h文件</h2>
 ```cpp
@@ -130,7 +130,7 @@ struct PrjectURL {          // 资源描述结构体
 // 文件操作:
 - OutFilePrject()           // 资源序列化存储
 - ReadFilePrject()          // 资源反序列化加载
-```cpp
+```
 
 
 <br><h2>功能流程图</h2>
@@ -167,4 +167,4 @@ ReadFilePrject(&PIIEG, "resources.txt");
 
 资源文件按四行一组格式存储(Name/URL/Type/Tag)
 
-```cpp
+```
