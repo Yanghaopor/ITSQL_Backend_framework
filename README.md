@@ -1,170 +1,208 @@
-# C++框架开发文档
+# Saver3RB 桌面应用开发框架文档
 
-## 文件结构说明
+## 目录
+1. [框架概述](#框架概述)
+2. [架构设计](#架构设计)
+3. [核心模块说明](#核心模块说明)
+   - [流处理模块](#流处理模块)
+   - [网络通信模块](#网络通信模块)
+   - [硬件信息模块](#硬件信息模块)
+   - [窗口管理模块](#窗口管理模块)
+   - [工具类模块](#工具类模块)
+4. [开发指南](#开发指南)
+5. [API 参考](#api-参考)
+6. [扩展开发](#扩展开发)
+7. [最佳实践](#最佳实践)
+8. [已知问题与改进方向](#已知问题与改进方向)
 
-### 1. InTypeSendSQL.h
-#### 核心功能模块
-```cpp
-namespace ICSQL {
-    class Var { // 多类型变量容器及进制转换工具
-        // 成员变量: 支持int/double/string等基础类型及指针
-        // 核心方法:
-        - Fpont_Self()        // 指针自绑定
-        - Turn_binary()       // 十进制转二进制
-        - BinToDEX()          // 二进制转十进制
-        - Automatic_sorting() // 数组自动排序
-        - DexToHex()          // 十进制转十六进制
-    };
-}
+---
 
-namespace EXTF {
-    class Extm { // 键盘监听模块
-        // 核心方法:
-        - OpenThreadGetKey()  // 启动异步键盘监听
-        - ThreadGetKey()      // 键盘输入捕获线程
-    };
+## 框架概述
+Saver3RB 是一个基于 C++ 的跨平台桌面应用开发框架，集成网络通信、硬件监控、资源管理和可视化界面功能。核心特性包括：
 
-    class TimeData { // 计时器系统
-        // 核心方法:
-        - MkTimerS()          // 创建秒级计时器
-        - MkTimerMS()         // 创建毫秒级计时器
-        - GetNow***()系列     // 获取系统时间组件
-    };
-}
+- 🖥️ 混合式架构：结合 Web 前端（HTML/JS）与原生 C++ 后端
+- 📡 内置高性能网络服务器（TCP/HTTP 双协议支持）
+- 📊 实时硬件监控（CPU/内存/GPU/磁盘）
+- 🎨 现代化窗口效果（毛玻璃/透明背景/无边框）
+- ⚙️ 模块化设计，支持快速功能扩展
 
-namespace IntelNet {
-    class InteS { // 网络通信核心
-        // 成员变量:
-        - EMA4096等接收缓冲区
-        - OnlineSet 网络参数配置结构体
-        
-        // 核心方法:
-        - MkIntNet()          // 创建网络服务端
-        - Recv()/Send()       // 数据收发接口
-        - CreaPost()系列      // HTTP协议构造工具
-        - GetNAME()/GetData() // HTTP参数解析
-    };
-}
+---
 
-namespace ComeputerInfo {
-    class RamInfor { // 内存信息模块
-        // 核心方法:
-        - GetMemoryUsage()    // 内存使用率
-        - GetMemoryModuleInfo() // 内存硬件信息
-    };
+## 架构设计
+```plaintext
++---------------------+
+|    Web 前端层       |
+| (HTML/CSS/JavaScript) |
++----------+----------+
+           |
++----------v----------+    +-------------------+
+|   Native Bridge     <---->  C++ 核心逻辑层   |
++----------+----------+    +---------+---------+
+           |                         |
++----------v----------+    +---------v---------+
+|  窗口管理系统        |    | 网络通信系统       |
+| (透明/毛玻璃效果)    |    | (TCP/HTTP Server)  |
++----------+----------+    +---------+---------+
+           |                         |
++----------v----------+    +---------v---------+
+| 硬件监控系统         |    | 资源管理系统       |
+| (CPU/内存/GPU/磁盘)  |    | (文件/流处理)      |
++---------------------+    +-------------------+
 
-    class CPUinfor { // CPU监控模块
-        // 核心方法:
-        - getCpuUsage()       // CPU使用率
-        - GettoCPUmhz()       // 实时频率监测
-    };
 
-    class HardwareInfo { // 硬件综合信息
-        // 核心数据结构:
-        - GPUInfo/DiskInfo/SystemInfo
-        
-        // 核心方法:
-        - GetGPUInfo()        // 显卡信息获取
-        - GetDiskInfo()       // 硬盘信息扫描
-        - GetSystemInfo()     // 系统信息整合
-    };
-}
+核心模块说明
+流处理模块
+文件： stream.h
+功能： 统一管理图片、视频、脚本等资源文件
 
-namespace CreaWindowts {
-    class AsyncWindow { // 异步窗口管理
-        // 核心方法:
-        - Start()             // 启动窗口线程
-        - WindowProc()        // 窗口消息处理
-    };
+``cpp
+// 资源元数据结构
+struct PrjectURL {
+    std::string Name;  // 资源名称
+    std::string URL;   // 存储路径
+    std::string Type;  // 文件类型
+    std::string Tag;   // 标签信息
+};
+
+// 全局资源向量
+std::vector<PrjectURL> PIIEG;  // 图片
+std::vector<PrjectURL> VIDEO;  // 视频
+std::vector<PrjectURL> JavaSc; // JavaScript
+
+// 序列化到文件
+void OutFilePrject(std::vector<PrjectURL> File, std::string outfile);
+
+// 从文件反序列化
+void ReadFilePrject(std::vector<PrjectURL>* File, std::string outfile);
+
+``
+
+硬件信息模块
+文件： InTypeSendSQL.h (ComeputerInfo 命名空间)
+功能： 实时获取系统硬件数据
+
+``cpp
+// CPU 监控
+class CPUinfor {
+public:
+    double getCpuUsage();       // 获取使用率
+    double GettoCPUmhz();       // 获取当前频率
+    std::wstring GetCPUName();  // 获取处理器型号
+};
+
+// 内存监控
+class RamInfor {
+public:
+    double GetMemoryUsage();    // 内存使用率
+    double GetMemoryMax();      // 总内存容量
+};
+
+// 系统硬件综合信息
+class HardwareInfo {
+public:
+    struct GPUInfo { /*...*/ };
+    struct DiskInfo { /*...*/ };
     
-    // 实用函数:
-    - WebNotSize()           // 窗口尺寸锁定
-    - SetWebAlpha()          // 透明度控制
-    - EnableBlurBehindWindow() // 毛玻璃效果
+    std::vector<GPUInfo> GetGPUInfo();
+    std::vector<DiskInfo> GetDiskInfo();
+};
+``
+
+工具类模块
+文件： InTypeSendSQL.h (EXTF 命名空间)
+功能： 提供通用开发工具
+
+``cpp
+
+// 高性能计时器
+class TimeData {
+public:
+    static void MkTimerMS(int* a, int ms); // 毫秒级计时
+    static void MkTimerS(int* a, int s);   // 秒级计时
+};
+
+// 键盘监听
+class Extm {
+public:
+    static void OpenThreadGetKey(char* c); // 启动按键监听线程
+};
+
+``
+
+开发指南
+环境要求
+编译器：MSVC 2019+ / GCC 9.3+
+
+依赖库：Win32 API, WebView2, PDH, WMI
+
+推荐 IDE：Visual Studio 2022
+
+项目配置
+
+``cpp
+
+// 窗口参数
+int WHHight = GetSystemMetrics(SM_CYSCREEN); 
+int WHWither = GetSystemMetrics(SM_CXSCREEN);
+std::wstring RNAME = L"Saver3RB"; // 窗口标题
+
+// 网络参数
+int por = 11451; // 服务端口
+
+``
+
+API 参考
+核心函数
+函数签名	功能描述
+IdWebOpen::OpenWeb()	启动内嵌浏览器窗口
+IntelNet::InteS::MkIntNet()	初始化网络服务
+ComeputerInfo::CPUinfor::getCpuUsage()	获取 CPU 使用率
+
+扩展开发
+添加新业务逻辑
+在 OPEN.h 的 openWeb 函数中扩展处理逻辑：
+
+``cpp
+void openWeb(IntelNet::InteS& server, SOCKET clientSocket, 
+           std::vector<std::string>Data, std::vector<std::string>Name) {
+    
+    // 示例：处理登录请求
+    if(InquireName(Name, "login")) {
+        std::string response = "<h1>Welcome " + Data[0] + "</h1>";
+        std::string http = IntelNet::CreaPost("text/html", response, response.size());
+        server.Send((char*)http.c_str(), http.size());
+    }
 }
-```
-<br><h2>main.cpp文件</h2>
-```cpp
-// 全局状态:
-- g_bRunning                // 程序运行标志
-- CpuUserge/CpuMhz          // CPU监控变量
+``
 
-// 核心函数:
-- main()                    // 主入口
-  ├─ 资源初始化
-  ├─ 启动监控线程
-  ├─ 创建浏览器窗口
-  └─ 启动网络服务
+最佳实践
+硬件监控实现
 
-- OpenNet()                 // 网络服务初始化
-  ├─ 窗口属性设置
-  ├─ 创建TCP服务端
-  └─ 客户端连接管理
+``cpp
+// 在 main.cpp 中启动监控线程
+std::thread TimeGetCpuU([](){
+    while(CpuUsergeButton) {
+        CpuUserge = CPU.getCpuUsage();
+        // 推送到前端
+        std::string data = "CPU:" + std::to_string(CpuUserge);
+        BroadcastToClients(data); 
+    }
+});
+``
 
-- HandleClient()            // 客户端请求处理
-  ├─ 数据接收解析
-  └─ 调用业务逻辑
-```
-<br><h2>OPEN.h文件</h2>
-```cpp
-// 系统参数:
-- WHHight/WHWither          // 屏幕分辨率
+已知问题与改进方向
+当前限制
+窗口系统仅支持 Windows 平台
 
-// 硬件监控实例:
-- CPU/RAM/HAR               // 各硬件模块实例
+网络模块缺少 HTTPS 支持
 
-// 业务函数声明:
-- openWeb()                 // 网页业务处理入口
-```
+硬件监控采样频率固定为 1Hz
 
-<br><h2>stream.h文件</h2>
-```cpp
-// 数据结构:
-struct PrjectURL {          // 资源描述结构体
-    string Name/URL/Type/Tag
-}
+规划特性
+跨平台支持（Linux/macOS）
 
-// 资源向量:
-- PIIEG/VIDEO/JavaSc        // 分类资源存储
+集成 SQLite 数据库
 
-// 文件操作:
-- OutFilePrject()           // 资源序列化存储
-- ReadFilePrject()          // 资源反序列化加载
-```
+增加 GPU 温度监控
 
-
-<br><h2>功能流程图</h2>
-```cpp
-程序启动
-├─ 初始化硬件监控线程
-├─ 加载本地资源文件
-├─ 创建浏览器窗口
-└─ 启动网络服务
-   ├─ 监听客户端连接
-   └─ 异步处理请求
-       ├─ 解析HTTP参数
-       └─ 执行对应硬件操作
-
-接口实例
-// 获取CPU信息
-double usage = CPU.getCpuUsage();
-wstring name = CPU.GetCPUNameFromRegistry();
-
-// 创建网络服务
-IntelNet::InteS server;
-server.OSset.port = 8080;
-server.MkIntNet();
-
-// 资源文件操作
-ReadFilePrject(&PIIEG, "resources.txt");
-
-注意事项
-网络模块需先调用OpenIntOP()初始化Winsock
-
-硬件信息获取需要管理员权限
-
-窗口模块依赖WebView2运行时环境
-
-资源文件按四行一组格式存储(Name/URL/Type/Tag)
-
-```
+支持 WebSocket 通信
