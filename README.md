@@ -48,14 +48,14 @@ Saver3RB 是一个基于 C++ 的跨平台桌面应用开发框架，集成网络
 | 硬件监控系统         |    | 资源管理系统       |
 | (CPU/内存/GPU/磁盘)  |    | (文件/流处理)      |
 +---------------------+    +-------------------+
-
+```
 
 核心模块说明
 流处理模块
 文件： stream.h
 功能： 统一管理图片、视频、脚本等资源文件
 
-``cpp
+```cpp
 // 资源元数据结构
 struct PrjectURL {
     std::string Name;  // 资源名称
@@ -75,13 +75,13 @@ void OutFilePrject(std::vector<PrjectURL> File, std::string outfile);
 // 从文件反序列化
 void ReadFilePrject(std::vector<PrjectURL>* File, std::string outfile);
 
-``
+```
 
 硬件信息模块
 文件： InTypeSendSQL.h (ComeputerInfo 命名空间)
 功能： 实时获取系统硬件数据
 
-``cpp
+```cpp
 // CPU 监控
 class CPUinfor {
 public:
@@ -106,13 +106,13 @@ public:
     std::vector<GPUInfo> GetGPUInfo();
     std::vector<DiskInfo> GetDiskInfo();
 };
-``
+```
 
 工具类模块
 文件： InTypeSendSQL.h (EXTF 命名空间)
 功能： 提供通用开发工具
 
-``cpp
+```cpp
 
 // 高性能计时器
 class TimeData {
@@ -127,7 +127,7 @@ public:
     static void OpenThreadGetKey(char* c); // 启动按键监听线程
 };
 
-``
+```
 
 开发指南
 环境要求
@@ -139,7 +139,7 @@ public:
 
 项目配置
 
-``cpp
+```cpp
 
 // 窗口参数
 int WHHight = GetSystemMetrics(SM_CYSCREEN); 
@@ -149,7 +149,7 @@ std::wstring RNAME = L"Saver3RB"; // 窗口标题
 // 网络参数
 int por = 11451; // 服务端口
 
-``
+```
 
 API 参考
 核心函数
@@ -162,7 +162,7 @@ ComeputerInfo::CPUinfor::getCpuUsage()	获取 CPU 使用率
 添加新业务逻辑
 在 OPEN.h 的 openWeb 函数中扩展处理逻辑：
 
-``cpp
+```cpp
 void openWeb(IntelNet::InteS& server, SOCKET clientSocket, 
            std::vector<std::string>Data, std::vector<std::string>Name) {
     
@@ -173,12 +173,12 @@ void openWeb(IntelNet::InteS& server, SOCKET clientSocket,
         server.Send((char*)http.c_str(), http.size());
     }
 }
-``
+```
 
 最佳实践
 硬件监控实现
 
-``cpp
+```cpp
 // 在 main.cpp 中启动监控线程
 std::thread TimeGetCpuU([](){
     while(CpuUsergeButton) {
@@ -188,7 +188,7 @@ std::thread TimeGetCpuU([](){
         BroadcastToClients(data); 
     }
 });
-``
+```
 
 已知问题与改进方向
 当前限制
